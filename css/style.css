@@ -26,3 +26,22 @@ body {
     font-size: 2.5rem;
     font-weight: 300;
 }
+
+/* Estilos para tarjetas del dashboard */
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.hover-card .card-body {
+    border-radius: 12px;
+}
+
+.hover-card .btn {
+    border-radius: 25px;
+    padding: 8px 25px;
+}
