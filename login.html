@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Biblioteca Digital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-5">
+                        <h3 class="text-center mb-4">
+                            <i class="bi bi-book text-primary me-2"></i>
+                            Biblioteca Digital
+                        </h3>
+                        <h5 class="text-center text-muted mb-4">Iniciar Sesión</h5>
+
+                        <div id="alertContainer"></div>
+
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" class="form-control" placeholder="ejemplo@email.com" value="fran@gmail.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <input type="password" id="password" class="form-control" placeholder="••••••••" value="123456" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100" id="loginBtn">
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-3">
+                            <small>¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/config.js"></script>
+    <script>
+    // ⚠️ IMPORTANTE: NO incluir auth.js aquí para evitar conflictos
+    
+    $(document).ready(function() {
+        // Verificar que apiRequest existe
+        if (typeof apiRequest === 'undefined') {
+            $('#alertContainer').html(`
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Error de configuración. Verifica que config.js se cargó.
+                </div>
+            `);
+            return;
+        }
+
+        // Si ya está autenticado, redirigir
+        const token = localStorage.getItem('token');
+        if (token) {
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
+        $('#loginForm').on('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = $('#email').val().trim();
+            const password = $('#password').val();
+            const btn = $('#loginBtn');
+            const alertContainer = $('#alertContainer');
+            
+            // Validaciones básicas
+            if (!email || !password) {
+                showAlert('danger', 'Por favor ingresa email y contraseña');
+                return;
+            }
+            
+            // Deshabilitar botón y mostrar spinner
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Validando...');
+            alertContainer.empty();
+            
+            try {
+                console.log('🔐 Intentando login con:', { email });
+                
+                // Hacer la petición directamente con fetch para más control
+                const response = await fetch('http://localhost:3010/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                console.log('📡 Status:', response.status);
+                
+                // Leer la respuesta como JSON
+                const result = await response.json();
+                console.log('📦 Respuesta:', result);
+                
+                // Verificar si hay error
+                if (result.error) {
+                    throw new Error(result.mensaje || 'Error en el login');
+                }
+                
+                // Guardar token y usuario
+                localStorage.setItem('token', result.token);
+                localStorage.setItem('user', JSON.stringify(result.user));
+                
+                console.log('✅ Login exitoso, redirigiendo...');
+                
+                // Redirigir al dashboard
+                window.location.href = 'dashboard.html';
+                
+            } catch (error) {
+                console.error('❌ Error en login:', error);
+                
+                let mensaje = error.message || 'Error al iniciar sesión';
+                
+                // Mensajes más amigables
+                if (mensaje.includes('401') || mensaje.includes('Credenciales incorrectas')) {
+                    mensaje = '❌ Email o contraseña incorrectos';
+                } else if (mensaje.includes('NetworkError') || mensaje.includes('Failed to fetch')) {
+                    mensaje = '❌ Error de conexión. ¿La API está corriendo?';
+                } else if (mensaje.includes('500')) {
+                    mensaje = '❌ Error interno del servidor';
+                }
+                
+                showAlert('danger', mensaje);
+                
+                // Restaurar botón
+                btn.prop('disabled', false).html('<i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión');
+            }
+        });
+
+        function showAlert(type, message) {
+            const container = $('#alertContainer');
+            container.html(`
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-${type === 'danger' ? 'exclamation-triangle' : 'check-circle'}-fill me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `);
+            
+            // Auto-cerrar después de 5 segundos
+            setTimeout(() => {
+                container.find('.alert').alert('close');
+            }, 5000);
+        }
+    });
+    </script>
+</body>
+</html>

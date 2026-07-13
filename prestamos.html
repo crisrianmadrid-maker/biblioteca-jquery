@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Préstamos</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow"><div class="container">
+<a class="navbar-brand fw-bold" href="index.html"><i class="bi bi-book me-2"></i>Biblioteca Digital</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+<div class="collapse navbar-collapse" id="navbarNav"><ul class="navbar-nav me-auto" id="navMenu"></ul><div id="userSection" class="d-flex align-items-center gap-2"></div></div>
+</div></nav>
+<main class="container mt-4" style="padding-bottom:80px;">
+<div class="row"><div class="col-lg-4">
+<div class="card shadow-sm mb-4"><div class="card-body"><h5 class="card-title"><i class="bi bi-plus-circle me-2"></i>Nuevo Préstamo</h5>
+<div id="prestamoAlert"></div>
+<form id="prestamoForm"><div class="mb-3"><label for="libroSelect" class="form-label">Seleccionar Libro *</label><select id="libroSelect" class="form-select" required><option value="">-- Selecciona un libro --</option></select></div>
+<div class="mb-3"><label for="fechaDevolucion" class="form-label">Fecha de Devolución (opcional)</label><input type="date" id="fechaDevolucion" class="form-control"><small class="text-muted">Si no se especifica, será en 7 días</small></div>
+<button type="submit" class="btn btn-primary w-100" id="btnRegistrarPrestamo"><i class="bi bi-plus-circle me-2"></i> Registrar Préstamo</button></form></div></div></div>
+<div class="col-lg-8"><div class="d-flex justify-content-between align-items-center mb-3"><h2><i class="bi bi-arrow-left-right text-primary me-2"></i>Mis Préstamos</h2><span class="badge bg-primary" id="totalPrestamos">Total: 0</span></div>
+<div id="prestamosList"><div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><p class="text-muted mt-2">Cargando préstamos...</p></div></div></div></div>
+</main>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/prestamos.js"></script>
+</body>
+</html>
