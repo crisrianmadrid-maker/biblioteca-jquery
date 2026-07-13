@@ -50,29 +50,12 @@
         </div>
     </div>
 
-    <!-- 📌 JQUERY PRIMERO -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- 📌 LUEGO LOS ARCHIVOS LOCALES EN ORDEN -->
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
-    
-    <!-- 📌 FINALMENTE EL CÓDIGO DEL REGISTRO -->
     <script>
     $(document).ready(function() {
-        // Verificar si la función apiRequest existe
-        if (typeof apiRequest === 'undefined') {
-            console.error('❌ apiRequest no está definida. Verifica que config.js se cargó correctamente.');
-            $('#alertContainer').html(`
-                <div class="alert alert-danger" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    Error de configuración. Por favor recarga la página.
-                </div>
-            `);
-            return;
-        }
-
         // Si ya está autenticado, redirigir al dashboard
         if (typeof isAuthenticated !== 'undefined' && isAuthenticated()) {
             window.location.href = 'dashboard.html';
@@ -112,11 +95,9 @@
                     password: password
                 });
                 
-                // Guardar token y usuario
                 localStorage.setItem('token', result.token);
                 localStorage.setItem('user', JSON.stringify(result.user));
                 
-                // Redirigir al dashboard
                 window.location.href = 'dashboard.html';
                 
             } catch (error) {
